@@ -38,8 +38,7 @@ class LinkedList {
 
     // should return Node.data by index
     at(index, data) {
-        let count = 0,
-            node = this._head;
+        let node = this._head;
 
         if (this.length === 0 || index < 0 || index > this.length) {
             console.log('error at');
@@ -47,9 +46,8 @@ class LinkedList {
             return;
         }
 
-        while (count < index) {
+        for (let i = 0; i < index; i++) {
             node = node.next;
-            count++;
         }
 
         return !data ? node.data : node;
@@ -58,7 +56,7 @@ class LinkedList {
     // should insert data by index
     insertAt(index, data) {
         if (!this.length) {
-            return this.append(data);
+            return;
         }
 
         let node = this.at(index, true);
