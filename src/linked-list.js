@@ -1,11 +1,17 @@
 const Node = require('./node');
 
+Number.isInteger = Number.isInteger || function(value) {
+    return typeof value === "number" && isFinite(value) && Math.floor(value) === value;
+};
+
 class LinkedList {
     // assign 0 to this.length
     constructor() {
-        this.length = 0;
-        this._head = null;
-        this._tail = null;
+        this.clear();
+    }
+
+    isValidIndex(index) {
+        return this.length && Number.isInteger(index) && index >= 0 && index < this.length;
     }
 
     // should assign any nodes to this._head and this._tail if list is empty
@@ -38,13 +44,12 @@ class LinkedList {
 
     // should return Node.data by index
     at(index, data) {
-        let node = this._head;
-
-        if (this.length === 0 || index < 0 || index > this.length) {
+        if (!this.isValidIndex(index)) {
             console.log('error at');
-
             return;
         }
+
+        let node = this._head;
 
         for (let i = 0; i < index; i++) {
             node = node.next;
@@ -55,7 +60,8 @@ class LinkedList {
 
     // should insert data by index
     insertAt(index, data) {
-        if (!this.length) {
+        if (!this.isValidIndex(index)) {
+            console.log('error insertAt');
             return;
         }
 
@@ -68,7 +74,7 @@ class LinkedList {
 
     // should return true if list is empty
     isEmpty() {
-        return this.length ? false : true;
+        return !this.length;
     }
 
     // should clear the list
@@ -82,12 +88,12 @@ class LinkedList {
 
     // should delete element by index
     deleteAt(index) {
-        let nodeToDelete = this.at(index, true);
-
-        if (this.length == 0) {
-            console.log('deleteAt error');
+        if (!this.isValidIndex(index)) {
+            console.log('error deleteAt');
             return;
         }
+
+        let nodeToDelete = this.at(index, true);
 
         if (nodeToDelete.prev) {
             if (nodeToDelete.next) {
@@ -114,39 +120,28 @@ class LinkedList {
 
     // should reverse the list
     reverse() {
-        this._head = this._tail;
-        this._head.next = this._head.prev;
-        this._head.prev = null;
+        let newList = new LinkedList();
 
-        for (let i = 1; i < this.length; i++) {
-            let node = this.at(i, true)
-
-            if (node.prev) {
-                let nextNode = node.next;
-                node.next = node.prev;
-                node.prev = nextNode;
-            } else {
-                node.prev = node.next;
-                node.next = null;
-                this._tail = node;
-            }
+        for(let i = 0, node = this._tail; i < this.length; i++) {
+            newList.append(node.data);
+            node = node.prev;
         }
+
+        this._head = newList._head;
+        this._tail = newList._tail;
 
         return this;
     }
 
     // should return index of element if data is found
     indexOf(data) {
-        let index = -1;
-
         for (let i = 0; i < this.length; i++) {
-            if (this.at(i) == data) {
-                index = i;
-                break;
+            if (this.at(i) === data) {
+                return i;
             }
         }
 
-        return index;
+        return -1;
     }
 }
 
